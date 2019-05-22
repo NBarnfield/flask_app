@@ -1,16 +1,63 @@
-from flask import Flask
+from flask import Flask, jsonify, request, url_for, redirect
 
 app = Flask(__name__)
 
+app.config['DEBUG'] = True
+
 
 @app.route('/')
-def hello_world():
-    return "Hello World!"
+def index():
+    return '<h1>Hello, world!</h1>'
+
+
+@app.route('/home', methods=['POST', 'GET'], defaults={'name': 'Default'})
+@app.route('/home/<string:name>', methods=['POST', 'GET'])
+def home(name):
+    return '<h1>Hello {}, you are on the home page!</h1>'.format(name)
+
+
+@app.route('/json')
+def json():
+    return jsonify({'key': 'value', 'listkey': [1, 2, 3]})
+
+
+@app.route('/query')
+def query():
+    name = request.args.get('name')
+    location = request.args.get('location')
+    return '<h1>Hi {}. You are from {}. You are on the query page!</h1>'.format(name, location)
+
+
+@app.route('/theform', methods=['POST', 'GET'])
+def theform():
+
+    if request.method == 'GET':
+        return '''<form method="POST" action="/theform">
+        <input type="text" name="name">
+        <input type="text" name="location">
+        <input type="submit" valur="Submit">
+        </form>'''
+
+    else:
+        name = request.form['name']
+        location = request.form['location']
+
+        # return '<h1>Hello {}. You are from {}. You have submitted the form successfully!<h1>'.format(name, location)
+        return redirect((url_for('home', name=name, location=location)))
+
+
+@app.route('/processjson', methods=['POST'])
+def processjson():
+
+    data = request.get_json()
+
+    name = data['name']
+    location = data['location']
+
+    randomlist = data['randomlist']
+
+    return jsonify({'result': 'Success!', 'name': name, 'location': location, 'randomkeylist': randomlist[1]})
 
 
 if __name__ == '__main__':
     app.run()
-#
-# first_word = input("What is your first name?")
-#     second_word = input("What is your second name?")
-#     full_name = print("So your full name is {} {}. Good for you!".format(first_word, second_word))
