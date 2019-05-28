@@ -1,10 +1,11 @@
-from flask import Flask, jsonify, request, url_for, redirect, session
+from flask import Flask, jsonify, request, url_for, redirect, session, render_template
 
 app = Flask(__name__)
 
 app.config['DEBUG'] = True
 # Configuring a cookie with a secret key prevents malicious hackers from decoding a cookie and sending it back.
 app.config['SECRET_KEY'] = 'ThisIsASecret!'
+
 
 @app.route('/')
 def index():
@@ -15,7 +16,7 @@ def index():
 @app.route('/home/<string:name>', methods=['POST', 'GET'])
 def home(name):
     session['name'] = name
-    return '<h1>Hello {}, you are on the home page!</h1>'.format(name)
+    return render_template('home.html', name=name, display=True, mylist=['one', 'two', 'three', 'four'], listofdictionaries=[{'name' : 'Zach'}, {'name': 'Zoe'}])
 
 
 @app.route('/json')
@@ -39,11 +40,7 @@ def query():
 def theform():
 
     if request.method == 'GET':
-        return '''<form method="POST" action="/theform">
-        <input type="text" name="name">
-        <input type="text" name="location">
-        <input type="submit" valur="Submit">
-        </form>'''
+        return render_template('form.html')
 
     else:
         name = request.form['name']
