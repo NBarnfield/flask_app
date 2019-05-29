@@ -1,10 +1,34 @@
-from flask import Flask, jsonify, request, url_for, redirect, session, render_template
+from flask import Flask, jsonify, request, url_for, redirect, session, render_template, g
+import sqlite3
 
 app = Flask(__name__)
 
 app.config['DEBUG'] = True
 # Configuring a cookie with a secret key prevents malicious hackers from decoding a cookie and sending it back.
 app.config['SECRET_KEY'] = 'ThisIsASecret!'
+
+
+# Connect to the sqlite database in the directory
+def connect_db():
+    sql = sqlite3.connect("C:\Users\Ned Barnfield\PycharmProjects\first_application\data.db")
+    # The row_factory method returns results as dictionaries insteads of the default tuples.
+    sql.row_factory = sqlite3.Row
+    return sql
+
+
+def get_db():
+    # g is a global variable used to store the sqlite database.
+    # The attribute check is used to ensure that it is connected
+    if not hasattr(g, 'sqlite3'):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
+
+# Teardown is automatically called once the route returns.
+# This is used here to automatically close the connection to the db once the information has been returned.
+@app.teardown_appcontext
+def close_db(error):
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
 
 
 @app.route('/')
