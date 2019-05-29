@@ -1,12 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-</head>
-<body>
+{# Inherit styling and generic details from the base template #}
+{% extends 'base.html' %}
+
+{# Using the block and endblock tags the child templates will inherit the formating and details from the base template#}
+{% block title %}Homepage{% endblock %}
+{% block content %}
+{# This line will allow the rending of content inside the base template concurrently with the content in
+the block tags. We can expect 'This is in the base template!' to render at the top of the page.#}
+{{ super }}
 {# A variable passed in as an argument in the app page can be inserted using double curly brackets syntax #}
-<h1>Hello {{  name }}, you are on the home page!</h1>
+<h1>Hello {{ name }}, you are on the home page!</h1>
 {# Similarly a conditional statement can be inserted using curly brackets#}
 {% if display %}
     <h2>This is being displayed!</h2>
@@ -15,13 +17,14 @@
 {% endif %}
 
 {% for x in mylist %}
-<h3>{{ x }}</h3>
-{%  endfor %}
-
-{% for x in listofdictionaries %}
-<h4>{{  x.name }}</h4>
+    <h3>{{ x }}</h3>
 {% endfor %}
 
-<img src="{{  url_for('static', filename='images/prettyprinted.png') }}">
-</body>
-</html>
+{% for x in listofdictionaries %}
+    <h4>{{ x.name }}</h4>
+{% endfor %}
+
+<img src="{{ url_for('static', filename='images/prettyprinted.png') }}">
+{# The include function injects the contents of one template into another. #}
+{% include "include_this.html" %}
+{% endblock %}

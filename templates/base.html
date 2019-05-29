@@ -1,0 +1,21 @@
+{# This template will be used to extend the child templates as they will inherit the format of this template.
+This will allow the generic information that would be shared between each page to be located in one template
+that can be updated as required without needing to update each page.#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {# Blocks are used by Jinja to allow templates to fill in the details once they have inherited
+    the base templates design   #}
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+<h1>Base Template</h1>
+{% block content %}
+{# This line is demonstrating the use of the super function in form.html.
+While content between the block/endblock tags are usually ignored the {{ super() }} function will allow this text
+to render. #}
+<h2>This is in the base template!</h2>
+{% endblock %}
+</body>
+</html>

@@ -1,15 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>The Form</title>
-</head>
-<body>
-    <h1>Please fill out the form</h1>
-    <form method="POST" action="/theform">
-            <input type="text" name="name">
-            <input type="text" name="location">
-            <input type="submit" valur="Submit">
-    </form>
-</body>
-</html>
+{# Inherit styling and generic details from the base template #}
+{% extends 'base.html' %}
+
+{# Using the block and endblock tags the child templates will inherit the formating and details from the base template#}
+{% block title %}The Form{% endblock %}
+{% block content %}
+{# As child template's content superceeds the base template's content if it exists between blocks in the base template
+the {{ super() }} function must be used to allow code in the base template to render concurrently.
+We can expect 'This is in the base template!' to render at the top of the content. #}
+{{ super() }}
+<h1>Please fill out the form</h1>
+<form method="POST" action="/theform">
+    <input type="text" name="name">
+    <input type="text" name="location">
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
