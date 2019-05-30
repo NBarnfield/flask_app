@@ -10,6 +10,12 @@ the block tags. We can expect 'This is in the base template!' to render at the t
 {# A variable passed in as an argument in the app page can be inserted using double curly brackets syntax #}
 <h1>Hello {{ name }}, you are on the home page!</h1>
 {# Similarly a conditional statement can be inserted using curly brackets#}
+
+<h1>Database Results!</h1>
+{% for item in results %}
+<h2>ID: {{ item.id }} NAME: {{  item.name }} LOCATION: {{ item.location }}</h2>
+{% endfor %}
+
 {% if display %}
     <h2>This is being displayed!</h2>
 {% else %}

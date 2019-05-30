@@ -10,8 +10,8 @@ app.config['SECRET_KEY'] = 'ThisIsASecret!'
 
 # Connect to the sqlite database in the directory
 def connect_db():
-    sql = sqlite3.connect("C:\Users\Ned Barnfield\PycharmProjects\first_application\data.db")
-    # The row_factory method returns results as dictionaries insteads of the default tuples.
+    sql = sqlite3.connect("C:\\Users\\Ned Barnfield\\PycharmProjects\\first_application\\data.db")
+    # The row_factory method returns results as dictionaries instead of the default tuples.
     sql.row_factory = sqlite3.Row
     return sql
 
@@ -40,7 +40,12 @@ def index():
 @app.route('/home/<string:name>', methods=['POST', 'GET'])
 def home(name):
     session['name'] = name
-    return render_template('home.html', name=name, display=True, mylist=['one', 'two', 'three', 'four'], listofdictionaries=[{'name' : 'Zach'}, {'name': 'Zoe'}])
+    db = get_db()
+    cur = db.execute('select id, name, location from users')
+    results = cur.fetchall()
+
+    return render_template('home.html', name=name, display=True,
+                           mylist=['one', 'two', 'three', 'four'], listofdictionaries=[{'name' : 'Zach'}, {'name': 'Zoe'}], results=results)
 
 
 @app.route('/json')
@@ -70,6 +75,11 @@ def theform():
         name = request.form['name']
         location = request.form['location']
 
+        db = get_db()
+        # Using ? prevents SQL injection. Sqlite will format the insert for you rather .
+        db.execute('insert into users (name, location) values (?, ?)', [name, location])
+        db.commit()
+
         # return '<h1>Hello {}. You are from {}. You have submitted the form successfully!<h1>'.format(name, location)
         return redirect((url_for('home', name=name, location=location)))
 
@@ -86,6 +96,16 @@ def processjson():
 
     return jsonify({'result': 'Success!', 'name': name, 'location': location, 'randomkeylist': randomlist[1]})
 
+
+@app.route('/viewresults')
+def viewresults():
+    # Connect to the database and pass in a SQL query
+    db = get_db()
+    # Cursor is a pointer to the results
+    cur = db.execute('select id, name, location from users')
+    results = cur.fetchall()
+    return '<h1>The ID is {}. The name is {}. ' \
+           'The location is {}.</h1>'.format(results[2]['id'], results[2]['name'], results[2]['location'])
 
 if __name__ == '__main__':
     app.run()
